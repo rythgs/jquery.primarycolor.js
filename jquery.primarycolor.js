@@ -4,8 +4,6 @@
 
     $.fn.primaryColor = function(opts) {
 
-        var context;
-
         opts = $.extend({
             skip: 5,            // 総なめすると重いので 5px 飛ばしで走査する
             exclude: ['0,0,0'], // 除外する色 なんか黒が取得されるのでデフォルトで設定しとく
@@ -18,7 +16,7 @@
 
         function _onload(img_obj, $target) {
 
-            context = _getContext();
+            var context = _getContext();
 
             // canvas に画像を描画
             context.drawImage(img_obj, 0, 0);
@@ -67,10 +65,9 @@
 
         this.each(function() {
 
-            var $self = $(this);
-
-            var image = new Image();
-            var color = $self.attr('data-primary-color');
+            var $self = $(this),
+                image = new Image(),
+                color = $self.attr('data-primary-color');
 
             // すでに取得済みなら return;
             if ( color ) {
