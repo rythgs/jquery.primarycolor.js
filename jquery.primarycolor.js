@@ -1,36 +1,30 @@
-$.fn.primaryColor = function(opts) {
+;(function($, undefined) {
 
-    var _defaults = {
-        skip: 5,            // 総なめすると重いので 5px 飛ばしで走査する
-        exclude: ['0,0,0'], // 除外する色 なんか黒が取得されるのでデフォルトで設定しとく
-        callback: null
-    };
+    'use strict';
 
-    opts = $.extend({}, _defaults, opts);
+    $.fn.primaryColor = function(opts) {
 
-    return this.each(function() {
+        var context;
 
-        var canvas  = document.createElement('canvas'),
-            context = canvas.getContext('2d'),
-            image = new Image(),
-            $self = $(this),
-            color = $self.attr('data-primary-color');
+        opts = $.extend({
+            skip: 5,            // 総なめすると重いので 5px 飛ばしで走査する
+            exclude: ['0,0,0'], // 除外する色 なんか黒が取得されるのでデフォルトで設定しとく
+            callback: null
+        }, opts);
 
-        // すでに取得済みなら return;
-        if ( color ) {
-            if ( typeof opts.callback === 'function' ) {
-                opts.callback.call($self[0], color);
-            }
-            return true;
+        function _getContext() {
+            return document.createElement('canvas').getContext('2d');
         }
 
-        $(image).on('load', function() {
+        function _onload(img_obj, $target) {
+
+            context = _getContext();
 
             // canvas に画像を描画
-            context.drawImage(this, 0, 0);
+            context.drawImage(img_obj, 0, 0);
 
             // 画像データを取得
-            var image_data   = context.getImageData(0, 0, image.width, image.height),
+            var image_data   = context.getImageData(0, 0, img_obj.width, img_obj.height),
                 pixel_length = image_data.data.length,
                 data         = image_data.data;
 
@@ -64,13 +58,35 @@ $.fn.primaryColor = function(opts) {
                 }
             }
 
-            $self.attr('data-primary-color', primary_color.rgb);
+            $target.attr('data-primary-color', primary_color.rgb);
 
             if ( typeof opts.callback === 'function' ) {
-                opts.callback.call($self[0], primary_color.rgb);
+                opts.callback.call($target[0], primary_color.rgb);
             }
+        }
+
+        this.each(function() {
+
+            var $self = $(this);
+
+            var image = new Image();
+            var color = $self.attr('data-primary-color');
+
+            // すでに取得済みなら return;
+            if ( color ) {
+                if ( typeof opts.callback === 'function' ) {
+                    opts.callback.call($self[0], color);
+                }
+                return true;
+            }
+
+            $(image).on('load', function(e) {
+                _onload(this, $self);
+            });
+
+            image.src = this.src || '';
         });
 
-        image.src = this.src || '';
-    });
-};
+        return this;
+    };
+})(jQuery);
