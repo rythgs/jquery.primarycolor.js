@@ -10,10 +10,8 @@ http://rythgs.co/demo/primarycolor/
 
 ```js
 $(function() {
-  $('img').primaryColor({
-    callback: function(color) {
-      $(this).parents('.wrapper').css('background-color', 'rgb('+color+')');
-    }
+  $('img').primaryColor(function(color) {
+    $(this).parents('.wrapper').css('background-color', 'rgb('+color+')');
   });
 });
 ```
