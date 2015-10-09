@@ -1,111 +1,106 @@
-// The MIT License (MIT)
-//
-// Copyright (c) 2015 Ryota Higashi
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-
-;(function($, undefined) {
+/**
+ * -------------------------------------------------------------------------------------------
+ * jquery.primarycolor.js v1.2.2
+ * Licensed under MIT (https://github.com/rythgs/jquery.primarycolor.js/blob/master/LICENCE)
+ * -------------------------------------------------------------------------------------------
+ */
+;(function($, window, document, undefined) {
 
   'use strict';
 
-  $.fn.primaryColor = function(opts) {
+  var pluginName = 'primaryColor',
+      dataName   = 'primary-color',
+      defaults   = {
+        skip: 5, // 総なめすると重いので 5px 飛ばしで走査する
+        callback: null
+      };
 
-    opts = $.extend({
-      skip: 5,            // 総なめすると重いので 5px 飛ばしで走査する
-      exclude: ['0,0,0'], // 除外する色 なんか黒が取得されるのでデフォルトで設定しとく
-      callback: null
-    }, opts);
+  function Plugin(element, options) {
+    this.element   = element;
+    this.settings  = $.extend({}, defaults, this.configure(options));
+    this._defaults = defaults;
+    this._name     = pluginName;
+    this.primary   = { rgb: '', count: 0 };
+    this.init();
+  }
 
-    function _getContext() {
-      return document.createElement('canvas').getContext('2d');
-    }
-
-    function _onload(img_obj, $target) {
-
-      var context = _getContext();
-
-      // canvas に画像を描画
-      context.drawImage(img_obj, 0, 0);
-
-      // 画像データを取得
-      var image_data   = context.getImageData(0, 0, img_obj.width, img_obj.height),
-          pixel_length = image_data.data.length,
-          data         = image_data.data;
-
-      var colors = {},        // 取得した色の出現回数を格納しておく
-          primary_color = {   // プライマリカラーを格納
-            rgb: '',
-            count: 0
-          };
+  $.extend(Plugin.prototype, {
+    init: function() {
+      $(new Image()).on('load', $.proxy(this.onLoad, this)).prop('src', this.element.src || '');
+    },
+    configure: function(options) {
+      if ( typeof options === 'function' ) {
+        return {callback: options};
+      } else if ( typeof options === 'object' || !options ) {
+        return options;
+      }
+      return {};
+    },
+    getImageData: function() {
+      var canvas = document.createElement('canvas');
+      canvas.width = this.element.width;
+      canvas.height = this.element.height;
+      var context = canvas.getContext('2d');
+      context.drawImage(this.element, 0, 0);
+      return context.getImageData(0, 0, this.element.width, this.element.height);
+    },
+    isApproximateColor: function(color1, color2) {
+      if ( !color1 || !color2 ) {
+        return false;
+      }
+      var c1 = color1.split(','),
+          c2 = color2.split(','),
+          r  = c1[0] - c2[0],
+          g  = c1[1] - c2[1],
+          b  = c1[2] - c2[2],
+          l  = Math.sqrt(r * r + g * g + b * b);
+      return l < 60;
+    },
+    onLoad: function() {
+      var image_data   = this.getImageData(),
+          data         = image_data.data,
+          pixel_length = data.length / 4,
+          // 取得した色の出現回数を格納しておく
+          colors = {};
 
       // 1px ごとに画像データを走査する ( 1px ごとに rgba の 4 要素ある )
-      for ( var px = 0; px < pixel_length; px = px + opts.skip * 4 ) {
+      for ( var px = 0; px < pixel_length; px = px + this.settings.skip * 4 ) {
+
+        // 透明度を持つものは無視
+        if ( data[px+3] < 255 ) {
+          continue;
+        }
 
         var rgb = [ data[px], data[px+1], data[px+2] ].join(',');
-
-        // すでに同じ色が出現しているかカウントする
-        // 除外カラーにあるものはカウントしない
-        if ( !~$.inArray(rgb, opts.exclude) ) {
-          if ( rgb in colors ) {
-            colors[rgb]++;
-          } else {
-            colors[rgb] = 1;
-          }
+        // primary color との近似色判定
+        if ( this.primary.rgb && this.isApproximateColor(this.primary.rgb, rgb) ) {
+          rgb = this.primary.rgb;
         }
 
-        var count = colors[rgb];
-
+        // すでに同じ色が出現しているかカウント
         // 保持しているプライマリカラーより出現回数が多くなったら入れ替え
-        if ( count > primary_color.count ) {
-          primary_color.rgb = rgb;
-          primary_color.count = count;
+        colors[rgb] = colors[rgb] || 0;
+        var count = ++colors[rgb];
+        if ( count > this.primary.count ) {
+          this.primary.rgb = rgb;
+          this.primary.count = count;
         }
       }
 
-      $target.attr('data-primary-color', primary_color.rgb);
+      $.data(this.element, dataName, this.primary.rgb);
 
-      if ( typeof opts.callback === 'function' ) {
-        opts.callback.call($target[0], primary_color.rgb);
+      if ( typeof this.settings.callback === 'function' ) {
+        this.settings.callback.call(this.element, this.primary.rgb);
       }
     }
+  });
 
-    this.each(function() {
-
-      var $self = $(this),
-          image = new Image(),
-          color = $self.attr('data-primary-color');
-
-      // すでに取得済みなら return;
-      if ( color ) {
-        if ( typeof opts.callback === 'function' ) {
-          opts.callback.call($self[0], color);
-        }
-        return true;
+  $.fn[pluginName] = function(options) {
+    return this.each(function() {
+      if ( !$.data(this, 'plugin_' + pluginName) ) {
+        $.data(this, 'plugin_' + pluginName, new Plugin(this, options));
       }
-
-      $(image).on('load', function(e) {
-        _onload(this, $self);
-      });
-
-      image.src = this.src || '';
     });
-
-    return this;
   };
-})(jQuery);
+
+})(jQuery, window, document);
