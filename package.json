@@ -1,0 +1,20 @@
+{
+  "name": "jquery.primarycolor.js",
+  "version": "1.2.2",
+  "main": "./jquery.primarycolor.min.js",
+  "keywords": "jquery-plugin",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rythgs/jquery.primarycolor.js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rythgs/jquery.primarycolor.js/issues"
+  },
+  "author": "Ryota Higashi",
+  "license": "MIT",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^3.0.0"
+  }
+}
