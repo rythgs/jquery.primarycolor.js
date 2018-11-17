@@ -1,6 +1,6 @@
 # jquery.primarycolor.js
 
-画像のプライマリカラーを取得する jQuery プラグイン
+Get the primary color of the image
 
 ## Demo
 
@@ -10,11 +10,18 @@ http://rythgs.co/demo/primarycolor/
 
 ```js
 $(function() {
-  $('img').primaryColor(function(color) {
+  $('img').primaryColor(function(color, colors) {
     $(this).parents('.wrapper').css('background-color', 'rgb('+color+')');
   });
 });
 ```
+
+### Callback function
+
+| arguments | type | desc |
+| --------- | ---- | ---- |
+| color     | string | Primary color |
+| colors    | array | Top 5 colors |
 
 ## License
 
