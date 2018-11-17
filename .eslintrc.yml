@@ -1,0 +1,24 @@
+extends:
+  - standard
+  - prettier
+plugins:
+  - prettier
+env:
+  browser: true
+  jquery: true
+rules:
+  # prettier
+  prettier/prettier:
+    - 2
+    -
+      trailingComma: none
+      singleQuote: true
+      semi: false
+      printWidth: 120
+  # rules
+  no-var: 2
+  prefer-const: 2
+  no-unused-vars: 2
+  no-multiple-empty-lines:
+    - 2
+    - max: 1
