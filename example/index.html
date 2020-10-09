@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <title>jquery.primarycolor.js</title>
+    <style>
+      body {
+        margin: 0;
+      }
+      h3 {
+        margin: 0;
+        padding: 1rem;
+        text-align: center;
+        color: white;
+        font-weight: 400;
+        margin-bottom: 5rem;
+      }
+      .wrapper {
+        padding: 100px 20px;
+        text-align: center;
+        -webkit-transition: 1s;
+        -moz-transition: 1s;
+        -o-transition: 1s;
+        transition: 1s;
+      }
+      .wrapper img {
+        display: block;
+        margin: 0 auto;
+        -webkit-box-shadow: 0 0 8px 2px rgba(0, 0, 0, 0.4);
+        -moz-box-shadow: 0 0 8px 2px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 0 8px 2px rgba(0, 0, 0, 0.4);
+        border-radius: 4px;
+        max-width: 100%;
+        height: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <h3>jquery.primarycolor.js</h3>
+      <img src="./sample1.jpg" alt="sample1" />
+    </div>
+    <div class="wrapper">
+      <img src="./sample2.jpg" alt="sample2" />
+    </div>
+    <div class="wrapper">
+      <img src="./sample3.jpg" alt="sample3" />
+    </div>
+    <div class="wrapper">
+      <img src="./sample4.jpg" alt="sample4" />
+    </div>
+    <div class="wrapper">
+      <img src="./sample5.png" alt="sample5" />
+    </div>
+
+    <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="../dist/jquery.primarycolor.min.js"></script>
+    <script>
+      $(function () {
+        $('img').primaryColor(function (c, cs) {
+          $(this)
+            .parent()
+            .css('background', 'rgb(' + c + ')')
+        })
+      })
+    </script>
+  </body>
+</html>
