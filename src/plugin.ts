@@ -23,7 +23,11 @@ $.fn.primaryColor = Object.assign<
 
     return this.each((index, element) => {
       if (!$.data(element, 'primary-color')) {
-        $.data(element, 'primary-color', new PrimaryColor(element, opts))
+        $.data(
+          element,
+          'primary-color',
+          new PrimaryColor(element as HTMLImageElement, opts),
+        )
       }
     })
   },

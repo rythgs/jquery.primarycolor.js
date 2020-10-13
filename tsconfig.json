@@ -11,6 +11,7 @@
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
+    "declaration": true,
     "outDir": "dist",
     "types": ["node", "jest"]
   },
