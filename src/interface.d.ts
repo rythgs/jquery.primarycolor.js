@@ -22,3 +22,8 @@ interface JQuery {
 interface ColorCounter {
   [key: string]: number
 }
+
+interface PrimaryColorObject {
+  rgb: string
+  count: number
+}

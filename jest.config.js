@@ -4,5 +4,5 @@ module.exports = {
   testMatch: ['<rootDir>/src/**/*.test.ts'],
   collectCoverage: true,
   errorOnDeprecated: true,
-  testEnvironment: 'node',
+  testEnvironmentOptions: { resources: 'usable' },
 }
