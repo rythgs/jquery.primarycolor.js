@@ -1,6 +1,5 @@
 coverage/
-dist/*
-!dist/jquery.primarycolor.min.js
+dist/
 node_modules/
 .DS_Store
 npm-debug.log
