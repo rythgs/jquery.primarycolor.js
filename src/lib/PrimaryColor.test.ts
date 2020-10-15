@@ -5,7 +5,6 @@ const loadImage = (url: string): Promise<HTMLImageElement> =>
     const img = new Image()
     img.onload = () => resolve(img)
     img.onerror = () => reject(new Error('error!'))
-    img.onabort = () => reject(new Error('error!'))
     img.src = url
   })
 
@@ -88,12 +87,12 @@ describe('色検出テスト', () => {
 })
 
 describe('PrimaryColor', () => {
-  it('getter', (done) => {
+  it('callback', (done) => {
     const img = new Image()
     img.src = primaryGreenImage
     // eslint-disable-next-line no-new
     new PrimaryColor(img, {
-      skip: 1,
+      skip: 0,
       callback(primaryColor) {
         expect(primaryColor).toEqual('0,255,0')
         done()
@@ -106,7 +105,7 @@ describe('PrimaryColor', () => {
     img.src = primaryGreenImage
     // eslint-disable-next-line no-new
     const pc = new PrimaryColor(img, {
-      skip: 1,
+      skip: 0,
       callback() {
         expect(pc.primaryColor).toEqual('0,255,0')
         done()
