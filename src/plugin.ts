@@ -1,39 +1,33 @@
 import $ from 'jquery'
 
-import { PrimaryColor } from './lib/PrimaryColor'
+import { PrimaryColor, detectColor } from './lib/PrimaryColor'
 
-$.fn.primaryColor = Object.assign<
-  PrimaryColorFunction,
-  PrimaryColorGlobalOptions
->(
-  function primaryColor(
-    this: JQuery,
-    options: PrimaryColorOptions | Pick<PrimaryColorOptions, 'callback'>,
-  ): JQuery {
-    let opts: PrimaryColorOptions
-    if (typeof options === 'function') {
-      opts = $.extend({}, $.fn.primaryColor.options, { callback: options })
-    } else {
-      opts = $.extend({}, $.fn.primaryColor.options, options)
+export { detectColor }
+
+function pluginFunction(
+  this: JQuery,
+  options: PrimaryColorOptions | Pick<PrimaryColorOptions, 'callback'>,
+): JQuery {
+  const opts: PrimaryColorOptions =
+    typeof options === 'function'
+      ? $.extend({}, $.fn.primaryColor.options, { callback: options })
+      : $.extend({}, $.fn.primaryColor.options, options)
+
+  if (opts.skip < 0) {
+    throw new Error('Please set "skip" to a value greater than 0.')
+  }
+
+  return this.each((index, element) => {
+    if (!$.data(element, 'primary-color')) {
+      $.data(
+        element,
+        'primary-color',
+        new PrimaryColor(element as HTMLImageElement, opts),
+      )
     }
+  })
+}
 
-    if (opts.skip < 1) {
-      throw new Error('Please set "skip" to a value greater than 1.')
-    }
+pluginFunction.options = { skip: 5 }
 
-    return this.each((index, element) => {
-      if (!$.data(element, 'primary-color')) {
-        $.data(
-          element,
-          'primary-color',
-          new PrimaryColor(element as HTMLImageElement, opts),
-        )
-      }
-    })
-  },
-  {
-    options: {
-      skip: 5,
-    },
-  },
-)
+$.fn.primaryColor = pluginFunction

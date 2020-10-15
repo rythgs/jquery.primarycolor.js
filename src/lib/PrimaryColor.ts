@@ -1,7 +1,7 @@
 export const isApproximateColor = (
   color1: string,
   color2: string,
-  threshold = 60,
+  threshold = 35,
 ): boolean => {
   if (!color1 || !color2) {
     return false
@@ -17,18 +17,16 @@ export const isApproximateColor = (
 
 export const detectColor = (
   { data }: ImageData,
-  skip = 1,
+  skip = 0,
 ): [PrimaryColorObject, ColorCounter] => {
-  // プライマリカラーと出現回数
   const primary: PrimaryColorObject = { rgb: '', count: 0 }
-  // 取得した色の出現回数を格納
   const colors: ColorCounter = {}
   // 1px ごとに画像データを走査する ( 1px ごとに rgba の 4 要素ある )
-  for (let px = 0, len = data.length; px < len; px += skip * 4) {
+  for (let px = 0, len = data.length; px < len; px += (skip + 1) * 4) {
     // 透明度を持つものは無視
     // eslint-disable-next-line no-continue
     if (data[px + 3] < 255) continue
-    const tmpRgb = [data[px], data[px + 1], data[px + 2]].join(',')
+    const tmpRgb = `${data[px]},${data[px + 1]},${data[px + 2]}`
     // primary color との近似色判定を行い
     // 近似色と判断されたら rgb を入れ替える
     const rgb =
@@ -37,17 +35,15 @@ export const detectColor = (
         : tmpRgb
     // すでに同じ色が出現しているかカウント
     // 保持しているプライマリカラーより出現回数が多くなったら入れ替え
-    colors[rgb] = colors[rgb] || 0
-    // eslint-disable-next-line no-plusplus
-    const count = ++colors[rgb]
-    if (count > primary.count) {
+    colors[rgb] = (colors[rgb] || 0) + 1
+    if (colors[rgb] > primary.count) {
       primary.rgb = rgb
-      primary.count = count
+      primary.count = colors[rgb]
     }
   }
-
   return [primary, colors]
 }
+
 export class PrimaryColor {
   private primary = ''
 
@@ -80,7 +76,7 @@ export class PrimaryColor {
     }
   }
 
-  static getImageData(img: HTMLImageElement): ImageData {
+  static getImageData = (img: HTMLImageElement): ImageData => {
     const canvas = document.createElement('canvas')
     const context = canvas.getContext('2d') as CanvasRenderingContext2D
     canvas.width = img.width
@@ -89,7 +85,6 @@ export class PrimaryColor {
     return context.getImageData(0, 0, img.width, img.height)
   }
 
-  static sortColors(colors: ColorCounter): string[] {
-    return Object.keys(colors).sort((a, b) => colors[b] - colors[a])
-  }
+  static sortColors = (colors: ColorCounter): string[] =>
+    Object.keys(colors).sort((a, b) => colors[b] - colors[a])
 }
