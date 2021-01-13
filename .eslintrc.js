@@ -24,11 +24,12 @@ module.exports = {
   rules: {
     // common
     'prefer-const': 'error',
-    'no-unused-vars': 'error',
+    'no-unused-vars': 'off',
     'no-multiple-empty-lines': ['error', { max: 1 }],
     'no-use-before-define': 'off',
     // typescript
     '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/no-unused-vars': 'error',
     // import
     'import/prefer-default-export': 'off',
     'import/extensions': [
