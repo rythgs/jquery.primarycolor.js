@@ -31,23 +31,23 @@
     "prepare": "npm run build"
   },
   "devDependencies": {
-    "@types/jest": "26.0.24",
+    "@types/jest": "27.0.1",
     "@types/jquery": "3.5.6",
-    "@typescript-eslint/eslint-plugin": "4.28.4",
-    "@typescript-eslint/parser": "4.28.4",
+    "@typescript-eslint/eslint-plugin": "4.30.0",
+    "@typescript-eslint/parser": "4.30.0",
     "canvas": "2.8.0",
-    "eslint": "7.31.0",
+    "eslint": "7.32.0",
     "eslint-config-airbnb-base": "14.2.1",
     "eslint-config-prettier": "8.3.0",
     "eslint-import-resolver-alias": "1.1.2",
-    "eslint-plugin-import": "2.23.4",
-    "jest": "27.0.6",
+    "eslint-plugin-import": "2.24.2",
+    "jest": "27.1.0",
     "microbundle": "0.13.3",
     "npm-run-all": "4.1.5",
     "prettier": "2.3.2",
     "rimraf": "^3.0.2",
-    "ts-jest": "27.0.4",
-    "typescript": "^4.3.5"
+    "ts-jest": "27.0.5",
+    "typescript": "^4.4.2"
   },
   "engines": {
     "node": ">= 12",
