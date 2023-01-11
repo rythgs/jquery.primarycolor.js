@@ -4,6 +4,6 @@ module.exports = {
   testMatch: ['<rootDir>/src/**/*.test.ts'],
   collectCoverage: true,
   errorOnDeprecated: true,
-  testEnvironment: 'jsdom',
+  testEnvironment: 'jest-environment-jsdom',
   testEnvironmentOptions: { resources: 'usable' },
 }
