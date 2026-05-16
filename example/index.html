@@ -75,11 +75,7 @@
       <span class="color-info" aria-live="polite"></span>
     </div>
 
-    <script
-      src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
-      integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8="
-      crossorigin="anonymous"
-    ></script>
+    <script src="https://code.jquery.com/jquery-4.0.0.slim.min.js"></script>
     <script src="../dist/jquery.primarycolor.umd.js"></script>
     <script>
       $(function () {
@@ -89,14 +85,14 @@
 
         if (window.location.protocol === 'file:') {
           $status.text(
-            'Canvas cannot read local file:// images. Run `npm run build` and serve this directory over HTTP, for example: `python3 -m http.server`.',
+            'Canvas cannot read local file:// images. Run `bun run build` and serve this directory over HTTP, for example: `python3 -m http.server`.',
           )
           return
         }
 
         if (!$.fn.primaryColor) {
           $status.text(
-            'jquery.primarycolor.umd.js is not loaded. Run `npm run build` before opening the example.',
+            'jquery.primarycolor.umd.js is not loaded. Run `bun run build` before opening the example.',
           )
           return
         }

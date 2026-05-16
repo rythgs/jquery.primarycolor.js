@@ -3,9 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { PrimaryColor, getPrimaryColor } from './primaryColor'
 
 const imageData = {
-  data: new Uint8ClampedArray([
-    0, 255, 0, 255, 0, 255, 0, 255, 255, 0, 0, 255, 0, 255, 0, 255,
-  ]),
+  data: new Uint8ClampedArray([0, 255, 0, 255, 0, 255, 0, 255, 255, 0, 0, 255, 0, 255, 0, 255]),
   height: 2,
   width: 2,
 } as ImageData

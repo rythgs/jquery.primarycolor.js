@@ -44,9 +44,7 @@ describe('detectColor', () => {
 
     expect(rgb).toBe('0,255,0')
     expect(count).toBe(2)
-    expect(
-      Object.values(colors).reduce((acc, current) => acc + current, 0),
-    ).toBe(2)
+    expect(Object.values(colors).reduce((acc, current) => acc + current, 0)).toBe(2)
   })
 
   it('skip に応じて走査ピクセルを間引く', () => {

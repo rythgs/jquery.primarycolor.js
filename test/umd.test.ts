@@ -10,7 +10,6 @@ describe('UMD bundle', () => {
     const bundle = fs.readFileSync(bundlePath, 'utf8')
 
     Object.assign(window, { $, jQuery: $ })
-    // eslint-disable-next-line no-eval
     window.eval(bundle)
 
     expect(typeof $.fn.primaryColor).toBe('function')

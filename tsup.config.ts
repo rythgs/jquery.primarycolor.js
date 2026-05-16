@@ -8,5 +8,5 @@ export default defineConfig({
   format: ['esm', 'cjs'],
   outDir: 'dist',
   sourcemap: true,
-  target: 'es2022',
+  target: 'es2024',
 })

@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
+    "target": "ES2024",
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "lib": ["DOM", "DOM.Iterable", "ES2024"],
     "strict": true,
     "esModuleInterop": true,
     "verbatimModuleSyntax": true,
@@ -16,6 +16,7 @@
     "exactOptionalPropertyTypes": true,
     "declaration": true,
     "declarationMap": true,
+    "ignoreDeprecations": "6.0",
     "outDir": "dist",
     "types": []
   },

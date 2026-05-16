@@ -1,10 +1,6 @@
 import type { ColorCounter, RGBString } from './types'
 
-export const isApproximateColor = (
-  color1: string,
-  color2: string,
-  threshold = 35,
-): boolean => {
+export const isApproximateColor = (color1: string, color2: string, threshold = 35): boolean => {
   if (!color1 || !color2) {
     return false
   }
@@ -19,13 +15,8 @@ export const isApproximateColor = (
   return l < threshold
 }
 
-export const toRGBString = (
-  red: number,
-  green: number,
-  blue: number,
-): RGBString => `${red},${green},${blue}`
+export const toRGBString = (red: number, green: number, blue: number): RGBString =>
+  `${red},${green},${blue}`
 
 export const sortColors = (colors: ColorCounter): RGBString[] =>
-  Object.keys(colors).sort(
-    (a, b) => (colors[b] ?? 0) - (colors[a] ?? 0),
-  ) as RGBString[]
+  Object.keys(colors).sort((a, b) => (colors[b] ?? 0) - (colors[a] ?? 0)) as RGBString[]

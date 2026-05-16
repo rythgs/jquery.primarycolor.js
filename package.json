@@ -1,27 +1,35 @@
 {
   "name": "jquery.primarycolor.js",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Detect the primary color of an image with a modern API and jQuery plugin adapter.",
   "keywords": [
+    "color",
     "jquery",
-    "plugin",
-    "color"
+    "plugin"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/rythgs/jquery.primarycolor.js.git"
-  },
   "homepage": "https://github.com/rythgs/jquery.primarycolor.js#readme",
   "bugs": {
     "url": "https://github.com/rythgs/jquery.primarycolor.js/issues"
   },
-  "author": "rythgs",
   "license": "MIT",
+  "author": "rythgs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rythgs/jquery.primarycolor.js.git"
+  },
   "source": "src/index.ts",
-  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": [
+    "./dist/jquery.js",
+    "./dist/jquery.cjs",
+    "./dist/jquery.primarycolor.umd.js"
+  ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
-  "type": "module",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -34,58 +42,40 @@
       "require": "./dist/jquery.cjs"
     }
   },
-  "sideEffects": [
-    "./dist/jquery.js",
-    "./dist/jquery.cjs",
-    "./dist/jquery.primarycolor.umd.js"
-  ],
   "scripts": {
-    "clean": "rimraf dist",
-    "build": "run-s clean bundle",
-    "ci": "run-s lint test build test:dist",
+    "clean": "rm -rf dist",
+    "build": "bun run clean && bun run bundle",
+    "ci": "bun run lint && bun run test && bun run build && bun run test:dist",
     "compile": "tsc",
-    "bundle": "run-s bundle:modules bundle:umd",
+    "bundle": "bun run bundle:modules && bun run bundle:umd",
     "bundle:modules": "tsup",
     "bundle:umd": "rollup -c",
-    "fix": "run-p fix:*",
-    "fix:eslint": "npm run lint:eslint -- --fix",
-    "fix:prettier": "npm run lint:prettier -- --write",
-    "lint": "run-p lint:*",
-    "lint:eslint": "eslint --ext js,ts .",
-    "lint:prettier": "prettier -l .",
+    "fix": "oxlint --fix && oxfmt",
+    "lint": "oxlint && oxfmt --check && tsc --noEmit",
     "lint:type": "tsc --noEmit",
     "test": "vitest run --exclude \"test/**/*.test.ts\"",
     "test:dist": "vitest run test/*.test.ts",
     "test:umd": "vitest run test/umd.test.ts",
-    "prepare": "npm run build"
+    "prepare": "bun run build"
   },
   "devDependencies": {
-    "@types/jquery": "3.5.30",
-    "@typescript-eslint/eslint-plugin": "7.17.0",
-    "@typescript-eslint/parser": "7.17.0",
-    "eslint": "8.56.0",
-    "eslint-config-airbnb-base": "15.0.0",
-    "eslint-config-prettier": "9.1.0",
-    "eslint-import-resolver-alias": "1.1.2",
-    "eslint-plugin-import": "2.29.1",
-    "jquery": "3.7.1",
-    "jsdom": "24.1.3",
-    "npm-run-all": "4.1.5",
-    "prettier": "3.3.3",
-    "rimraf": "^6.0.1",
-    "rollup": "4.18.1",
-    "tsup": "8.2.4",
-    "typescript": "^5.5.4",
-    "vitest": "2.0.5"
+    "@types/jquery": "4.0.0",
+    "@types/node": "24.12.4",
+    "jquery": "4.0.0",
+    "jsdom": "29.1.1",
+    "oxfmt": "0.50.0",
+    "oxlint": "1.65.0",
+    "rollup": "4.60.4",
+    "tsup": "8.5.1",
+    "typescript": "6.0.3",
+    "vitest": "4.1.6"
   },
   "peerDependencies": {
-    "jquery": ">=3.7 <4"
+    "jquery": ">=4 <5"
   },
   "engines": {
-    "node": ">= 18",
-    "npm": ">= 9.5"
+    "bun": ">=1.3.14",
+    "node": ">=24"
   },
-  "files": [
-    "dist"
-  ]
+  "packageManager": "bun@1.3.14"
 }

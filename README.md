@@ -9,7 +9,7 @@ http://rythgs.co/demo/primarycolor/
 ## Install
 
 ```sh
-npm install jquery.primarycolor.js jquery
+bun add jquery.primarycolor.js jquery
 ```
 
 ## Modern API
@@ -75,7 +75,7 @@ Plugin notes:
 ## UMD / script tag
 
 ```html
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://code.jquery.com/jquery-4.0.0.min.js"></script>
 <script src="dist/jquery.primarycolor.umd.js"></script>
 
 <!-- Or from a CDN: -->
