@@ -39,6 +39,18 @@ module.exports = {
         ts: 'never',
       },
     ],
+    'import/no-extraneous-dependencies': [
+      'error',
+      {
+        devDependencies: [
+          '**/*.test.ts',
+          '*.config.ts',
+          'test/**/*.ts',
+          'vitest.config.ts',
+          'tsup.config.ts',
+        ],
+      },
+    ],
     'import/order': [
       'warn',
       {
@@ -47,4 +59,19 @@ module.exports = {
       },
     ],
   },
+  overrides: [
+    {
+      files: ['vitest.config.ts'],
+      rules: {
+        'import/extensions': 'off',
+        'import/no-unresolved': 'off',
+      },
+    },
+    {
+      files: ['test/**/*.ts'],
+      rules: {
+        'import/extensions': 'off',
+      },
+    },
+  ],
 }

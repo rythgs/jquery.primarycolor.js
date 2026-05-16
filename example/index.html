@@ -9,48 +9,70 @@
       }
       h3 {
         margin: 0;
+        margin-bottom: 5rem;
         padding: 1rem;
-        text-align: center;
         color: white;
         font-weight: 400;
-        margin-bottom: 5rem;
+        text-align: center;
+      }
+      .status {
+        margin: 0;
+        padding: 1rem;
+        color: #333;
+        text-align: center;
+        background: #fff3cd;
+      }
+      .status[data-state='ready'] {
+        color: #0f5132;
+        background: #d1e7dd;
       }
       .wrapper {
         padding: 100px 20px;
         text-align: center;
-        -webkit-transition: 1s;
-        -moz-transition: 1s;
-        -o-transition: 1s;
         transition: 1s;
       }
       .wrapper img {
         display: block;
-        margin: 0 auto;
-        -webkit-box-shadow: 0 0 8px 2px rgba(0, 0, 0, 0.4);
-        -moz-box-shadow: 0 0 8px 2px rgba(0, 0, 0, 0.4);
-        box-shadow: 0 0 8px 2px rgba(0, 0, 0, 0.4);
-        border-radius: 4px;
         max-width: 100%;
         height: auto;
+        margin: 0 auto;
+        border-radius: 4px;
+        box-shadow: 0 0 8px 2px rgba(0, 0, 0, 0.4);
+      }
+      .color-info {
+        display: inline-block;
+        margin-top: 1rem;
+        padding: 0.25rem 0.5rem;
+        color: #fff;
+        font-family: monospace;
+        background: rgba(0, 0, 0, 0.5);
+        border-radius: 4px;
       }
     </style>
   </head>
   <body>
+    <p class="status" id="status">Loading primary colors...</p>
+
     <div class="wrapper">
       <h3>jquery.primarycolor.js</h3>
       <img src="./sample1.jpg" alt="sample1" />
+      <span class="color-info" aria-live="polite"></span>
     </div>
     <div class="wrapper">
       <img src="./sample2.jpg" alt="sample2" />
+      <span class="color-info" aria-live="polite"></span>
     </div>
     <div class="wrapper">
       <img src="./sample3.jpg" alt="sample3" />
+      <span class="color-info" aria-live="polite"></span>
     </div>
     <div class="wrapper">
       <img src="./sample4.jpg" alt="sample4" />
+      <span class="color-info" aria-live="polite"></span>
     </div>
     <div class="wrapper">
       <img src="./sample5.png" alt="sample5" />
+      <span class="color-info" aria-live="polite"></span>
     </div>
 
     <script
@@ -61,11 +83,45 @@
     <script src="../dist/jquery.primarycolor.umd.js"></script>
     <script>
       $(function () {
-        $('img').primaryColor(function (c, cs) {
+        var $status = $('#status')
+        var $images = $('img')
+        var pending = $images.length
+
+        if (window.location.protocol === 'file:') {
+          $status.text(
+            'Canvas cannot read local file:// images. Run `npm run build` and serve this directory over HTTP, for example: `python3 -m http.server`.',
+          )
+          return
+        }
+
+        if (!$.fn.primaryColor) {
+          $status.text(
+            'jquery.primarycolor.umd.js is not loaded. Run `npm run build` before opening the example.',
+          )
+          return
+        }
+
+        $images.primaryColor(function (color) {
           $(this)
             .parent()
-            .css('background', 'rgb(' + c + ')')
+            .css('background', 'rgb(' + color + ')')
+          $(this)
+            .siblings('.color-info')
+            .text('primary: rgb(' + color + ')')
+
+          pending -= 1
+          if (pending === 0) {
+            $status.attr('data-state', 'ready').text('Primary colors detected.')
+          }
         })
+
+        window.setTimeout(function () {
+          if (pending > 0) {
+            $status.text(
+              'Primary color detection did not finish. Check image CORS and the generated dist bundle.',
+            )
+          }
+        }, 5000)
       })
     </script>
   </body>
