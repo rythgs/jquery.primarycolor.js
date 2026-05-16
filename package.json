@@ -45,7 +45,7 @@
   "scripts": {
     "clean": "rm -rf dist",
     "build": "bun run clean && bun run bundle",
-    "ci": "bun run lint && bun run test && bun run build && bun run test:dist",
+    "ci": "bun run lint && bun run test && bun run build && bun run test:dist && bun run test:umd",
     "compile": "tsc",
     "bundle": "bun run bundle:modules && bun run bundle:umd",
     "bundle:modules": "tsup",
