@@ -47,7 +47,7 @@ const loadImage = (element: HTMLImageElement): Promise<HTMLImageElement> =>
     if (element.crossOrigin) {
       img.crossOrigin = element.crossOrigin
     } else if (shouldUseAnonymousCrossOrigin(src)) {
-      img.crossOrigin = 'Anonymous'
+      img.crossOrigin = 'anonymous'
     }
     img.onload = () => resolve(img)
     img.onerror = () => reject(new Error('Failed to load image.'))
