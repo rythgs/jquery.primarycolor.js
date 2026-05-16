@@ -40,6 +40,7 @@ Notes:
 - `color` is an RGB string such as `"12,34,56"`.
 - `color` can be an empty string when no opaque pixel is found.
 - Image loading, CORS, or tainted canvas failures reject the returned Promise.
+- Cross-origin images require both `<img crossorigin="anonymous">` and an image server that sends a compatible `Access-Control-Allow-Origin` header. Without server-side CORS permission, browsers taint the canvas and block color extraction.
 
 ## jQuery plugin
 
