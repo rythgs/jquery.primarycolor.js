@@ -1,4 +1,4 @@
-import { sortColors, toRGBString } from './color'
+import { isApproximateColor, sortColors, toRGBString } from './color'
 import type { ColorCounter, PrimaryColorObject, RGBString } from './types'
 
 interface ColorBucket {
@@ -8,6 +8,11 @@ interface ColorBucket {
   red: number
 }
 
+interface ColorCandidate extends ColorBucket {
+  rgb: RGBString
+}
+
+const OKLAB_MERGE_THRESHOLD = 0.04
 const QUANTIZE_SHIFT = 3
 
 export const assertValidSkip = (skip: number): void => {
@@ -48,17 +53,34 @@ export const detectColor = ({ data }: ImageData, skip = 0): [PrimaryColorObject,
     }
   }
 
-  const primary: PrimaryColorObject = { rgb: '', count: 0 }
-  const colors: ColorCounter = {}
+  const candidates: ColorCandidate[] = []
 
   for (const bucket of Object.values(buckets)) {
     const rgb = toAverageRGBString(bucket)
+    const candidate = candidates.find((current) =>
+      isApproximateColor(current.rgb, rgb, OKLAB_MERGE_THRESHOLD),
+    )
 
-    colors[rgb] = (colors[rgb] ?? 0) + bucket.count
+    if (candidate) {
+      candidate.count += bucket.count
+      candidate.red += bucket.red
+      candidate.green += bucket.green
+      candidate.blue += bucket.blue
+      candidate.rgb = toAverageRGBString(candidate)
+    } else {
+      candidates.push({ ...bucket, rgb })
+    }
+  }
 
-    if (bucket.count > primary.count) {
-      primary.rgb = rgb
-      primary.count = bucket.count
+  const primary: PrimaryColorObject = { rgb: '', count: 0 }
+  const colors: ColorCounter = {}
+
+  for (const candidate of candidates) {
+    colors[candidate.rgb] = (colors[candidate.rgb] ?? 0) + candidate.count
+
+    if (candidate.count > primary.count) {
+      primary.rgb = candidate.rgb
+      primary.count = candidate.count
     }
   }
 

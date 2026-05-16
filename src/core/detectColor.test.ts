@@ -75,6 +75,20 @@ describe('detectColor', () => {
     expect(colors['0,255,0']).toBe(1)
   })
 
+  it('量子化ビンが分かれた近似色も OKLab 距離で同じ候補として数える', () => {
+    const imageData = createImageData([
+      [240, 0, 0],
+      [248, 2, 1],
+      [0, 255, 0],
+    ])
+    const [{ rgb, count }, colors] = detectColor(imageData)
+
+    expect(rgb).toBe('244,1,1')
+    expect(count).toBe(2)
+    expect(colors['244,1,1']).toBe(2)
+    expect(colors['0,255,0']).toBe(1)
+  })
+
   it.each([[-1], [0.5], [Number.NaN], [Number.POSITIVE_INFINITY]])(
     'skip が非負安全整数でない場合はエラーにする: %s',
     (skip) => {

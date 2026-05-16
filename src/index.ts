@@ -5,7 +5,7 @@ export {
   getPrimaryColor,
   resolvePrimaryColorOptions,
 } from './browser/primaryColor'
-export { isApproximateColor, sortColors } from './core/color'
+export { getOKLabDistance, isApproximateColor, sortColors } from './core/color'
 export { detectColor } from './core/detectColor'
 
 export type {

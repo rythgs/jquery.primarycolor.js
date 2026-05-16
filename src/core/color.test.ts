@@ -1,9 +1,17 @@
 import { describe, expect, it } from 'vitest'
 
-import { isApproximateColor, sortColors } from './color'
+import { getOKLabDistance, isApproximateColor, sortColors } from './color'
+
+describe('getOKLabDistance', () => {
+  it('知覚的に近い色ほど距離が小さい', () => {
+    expect(getOKLabDistance('250,0,0', '248,2,1')).toBeLessThan(
+      getOKLabDistance('250,0,0', '0,255,0'),
+    )
+  })
+})
 
 describe('isApproximateColor', () => {
-  it('近似色であれば true', () => {
+  it('OKLab 距離で近似色であれば true', () => {
     expect(isApproximateColor('0,0,0', '1,1,1')).toBe(true)
   })
 
