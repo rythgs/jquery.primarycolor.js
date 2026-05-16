@@ -61,6 +61,20 @@ describe('detectColor', () => {
     expect(colors['0,255,0']).toBeUndefined()
   })
 
+  it('近い色を量子化ヒストグラムで同じ候補として数える', () => {
+    const imageData = createImageData([
+      [250, 0, 0],
+      [252, 1, 0],
+      [0, 255, 0],
+    ])
+    const [{ rgb, count }, colors] = detectColor(imageData)
+
+    expect(rgb).toBe('251,1,0')
+    expect(count).toBe(2)
+    expect(colors['251,1,0']).toBe(2)
+    expect(colors['0,255,0']).toBe(1)
+  })
+
   it.each([[-1], [0.5], [Number.NaN], [Number.POSITIVE_INFINITY]])(
     'skip が非負安全整数でない場合はエラーにする: %s',
     (skip) => {
