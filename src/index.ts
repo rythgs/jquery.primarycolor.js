@@ -1,5 +1,3 @@
-import './jquery'
-
 export { getImageData } from './browser/imageData'
 export {
   PrimaryColor,

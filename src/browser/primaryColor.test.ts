@@ -100,6 +100,21 @@ describe('getPrimaryColor', () => {
 
     expect(images[0]?.crossOrigin).toBe('')
   })
+
+  it.each([[-1], [0.5], [Number.NaN], [Number.POSITIVE_INFINITY]])(
+    'skip が非負安全整数でない場合は reject する: %s',
+    async (skip) => {
+      installCanvasMock()
+      installImageMock()
+
+      const img = document.createElement('img')
+      img.src = 'data:image/png;base64,test'
+
+      await expect(getPrimaryColor(img, { skip })).rejects.toThrow(
+        'Please set "skip" to a non-negative safe integer.',
+      )
+    },
+  )
 })
 
 describe('PrimaryColor', () => {

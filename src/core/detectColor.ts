@@ -1,13 +1,17 @@
 import { isApproximateColor, sortColors, toRGBString } from './color'
 import type { ColorCounter, PrimaryColorObject } from './types'
 
+export const assertValidSkip = (skip: number): void => {
+  if (!Number.isSafeInteger(skip) || skip < 0) {
+    throw new Error('Please set "skip" to a non-negative safe integer.')
+  }
+}
+
 export const detectColor = (
   { data }: ImageData,
   skip = 0,
 ): [PrimaryColorObject, ColorCounter] => {
-  if (skip < 0) {
-    throw new Error('Please set "skip" to a value greater than or equal to 0.')
-  }
+  assertValidSkip(skip)
 
   const primary: PrimaryColorObject = { rgb: '', count: 0 }
   const colors: ColorCounter = {}

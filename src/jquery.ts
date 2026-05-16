@@ -33,13 +33,22 @@ const normalizeOptions = (
     ? { ...jqueryWithPlugin.fn.primaryColor.options, callback: options }
     : { ...jqueryWithPlugin.fn.primaryColor.options, ...options }
 
+const isImageElement = (element: Element): element is HTMLImageElement =>
+  (typeof HTMLImageElement !== 'undefined' &&
+    element instanceof HTMLImageElement) ||
+  element.tagName.toLowerCase() === 'img'
+
 const pluginFunction = function primaryColor(
   this: JQuery,
   options?: PrimaryColorPluginOptions,
 ): JQuery {
-  const opts = resolvePrimaryColorOptions(normalizeOptions(options))
-
   return this.each((_, element) => {
+    if (!isImageElement(element)) {
+      return
+    }
+
+    const opts = resolvePrimaryColorOptions(normalizeOptions(options))
+
     if (!$.data(element, 'primary-color')) {
       $.data(
         element,

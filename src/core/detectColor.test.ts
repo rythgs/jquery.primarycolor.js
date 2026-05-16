@@ -62,4 +62,15 @@ describe('detectColor', () => {
     expect(count).toBe(2)
     expect(colors['0,255,0']).toBeUndefined()
   })
+
+  it.each([[-1], [0.5], [Number.NaN], [Number.POSITIVE_INFINITY]])(
+    'skip が非負安全整数でない場合はエラーにする: %s',
+    (skip) => {
+      const imageData = createImageData([[255, 0, 0]])
+
+      expect(() => detectColor(imageData, skip)).toThrow(
+        'Please set "skip" to a non-negative safe integer.',
+      )
+    },
+  )
 })

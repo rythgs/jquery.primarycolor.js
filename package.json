@@ -1,7 +1,7 @@
 {
   "name": "jquery.primarycolor.js",
   "version": "1.5.0",
-  "description": "",
+  "description": "Detect the primary color of an image with a modern API and jQuery plugin adapter.",
   "keywords": [
     "jquery",
     "plugin",
@@ -10,6 +10,10 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/rythgs/jquery.primarycolor.js.git"
+  },
+  "homepage": "https://github.com/rythgs/jquery.primarycolor.js#readme",
+  "bugs": {
+    "url": "https://github.com/rythgs/jquery.primarycolor.js/issues"
   },
   "author": "rythgs",
   "license": "MIT",
@@ -31,7 +35,6 @@
     }
   },
   "sideEffects": [
-    "./src/jquery.ts",
     "./dist/jquery.js",
     "./dist/jquery.cjs",
     "./dist/jquery.primarycolor.umd.js"
@@ -39,6 +42,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "build": "run-s clean bundle",
+    "ci": "run-s lint test build test:dist",
     "compile": "tsc",
     "bundle": "run-s bundle:modules bundle:umd",
     "bundle:modules": "tsup",

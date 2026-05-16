@@ -49,4 +49,23 @@ describe('jquery plugin', () => {
     expect(result).toBe($img)
     expect($.data($img[0], 'primary-color')).toBeDefined()
   })
+
+  it('画像以外の要素は no-op にして JQuery を返す', () => {
+    installImageMock()
+
+    const $div = $('<div />')
+    const result = $div.primaryColor(() => undefined)
+
+    expect(result).toBe($div)
+    expect($.data($div[0], 'primary-color')).toBeUndefined()
+  })
+
+  it('画像以外の要素では invalid options も no-op にする', () => {
+    installImageMock()
+
+    const $div = $('<div />')
+
+    expect(() => $div.primaryColor({ skip: -1 })).not.toThrow()
+    expect($.data($div[0], 'primary-color')).toBeUndefined()
+  })
 })

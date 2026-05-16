@@ -1,4 +1,4 @@
-import { detectColor, sortColors } from '../core/detectColor'
+import { assertValidSkip, detectColor, sortColors } from '../core/detectColor'
 import type {
   PrimaryColorOptions,
   PrimaryColorResult,
@@ -16,9 +16,7 @@ export const resolvePrimaryColorOptions = (
 ): ResolvedPrimaryColorOptions => {
   const resolved = { ...defaultPrimaryColorOptions, ...options }
 
-  if (resolved.skip < 0) {
-    throw new Error('Please set "skip" to a value greater than or equal to 0.')
-  }
+  assertValidSkip(resolved.skip)
 
   return resolved
 }
