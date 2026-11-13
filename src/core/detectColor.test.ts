@@ -89,6 +89,22 @@ describe('detectColor', () => {
     expect(colors['0,255,0']).toBe(1)
   })
 
+  it('ピクセルの走査順に依存しない結果を返す', () => {
+    // 64 と 72、72 と 80 は近似色だが 64 と 80 は近似色ではない
+    const pixels: Pixel[] = [
+      [64, 64, 64],
+      [64, 64, 64],
+      [72, 72, 72],
+      [80, 80, 80],
+      [80, 80, 80],
+    ]
+    const forward = detectColor(createImageData(pixels))
+    const reversed = detectColor(createImageData(pixels.toReversed()))
+
+    expect(reversed).toEqual(forward)
+    expect(forward[1][forward[0].rgb]).toBe(forward[0].count)
+  })
+
   it.each([[-1], [0.5], [Number.NaN], [Number.POSITIVE_INFINITY]])(
     'skip が非負安全整数でない場合はエラーにする: %s',
     (skip) => {

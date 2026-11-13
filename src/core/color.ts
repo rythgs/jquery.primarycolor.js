@@ -1,6 +1,6 @@
 import type { ColorCounter, RGBString } from './types'
 
-interface OKLabColor {
+export interface OKLabColor {
   a: number
   b: number
   lightness: number
@@ -18,8 +18,7 @@ const toLinearSRGB = (channel: number): number => {
   return normalized <= 0.04045 ? normalized / 12.92 : Math.pow((normalized + 0.055) / 1.055, 2.4)
 }
 
-const toOKLab = (color: string): OKLabColor => {
-  const [red, green, blue] = parseRGBString(color)
+export const rgbToOKLab = (red: number, green: number, blue: number): OKLabColor => {
   const linearRed = toLinearSRGB(red)
   const linearGreen = toLinearSRGB(green)
   const linearBlue = toLinearSRGB(blue)
@@ -41,15 +40,18 @@ const toOKLab = (color: string): OKLabColor => {
   }
 }
 
-export const getOKLabDistance = (color1: string, color2: string): number => {
-  const lab1 = toOKLab(color1)
-  const lab2 = toOKLab(color2)
+const toOKLab = (color: string): OKLabColor => rgbToOKLab(...parseRGBString(color))
+
+export const getLabDistance = (lab1: OKLabColor, lab2: OKLabColor): number => {
   const lightness = lab1.lightness - lab2.lightness
   const a = lab1.a - lab2.a
   const b = lab1.b - lab2.b
 
   return Math.sqrt(lightness * lightness + a * a + b * b)
 }
+
+export const getOKLabDistance = (color1: string, color2: string): number =>
+  getLabDistance(toOKLab(color1), toOKLab(color2))
 
 export const isApproximateColor = (color1: string, color2: string, threshold = 0.08): boolean => {
   if (!color1 || !color2) {

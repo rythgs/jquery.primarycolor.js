@@ -1,4 +1,5 @@
-import { isApproximateColor, sortColors, toRGBString } from './color'
+import { getLabDistance, rgbToOKLab, sortColors, toRGBString } from './color'
+import type { OKLabColor } from './color'
 import type { ColorCounter, PrimaryColorObject, RGBString } from './types'
 
 interface ColorBucket {
@@ -8,8 +9,13 @@ interface ColorBucket {
   red: number
 }
 
+interface QuantizedBucket extends ColorBucket {
+  key: string
+}
+
 interface ColorCandidate extends ColorBucket {
-  rgb: RGBString
+  // マージ判定の基準色。平均色に追従させると走査順で結果が変わるため、最初のバケットの色で固定する
+  lab: OKLabColor
 }
 
 const OKLAB_MERGE_THRESHOLD = 0.04
@@ -27,10 +33,17 @@ const getQuantizedKey = (red: number, green: number, blue: number): string =>
 const toAverageRGBString = ({ blue, count, green, red }: ColorBucket): RGBString =>
   toRGBString(Math.round(red / count), Math.round(green / count), Math.round(blue / count))
 
+const toAverageOKLab = ({ blue, count, green, red }: ColorBucket): OKLabColor =>
+  rgbToOKLab(Math.round(red / count), Math.round(green / count), Math.round(blue / count))
+
+// 出現数の多い順 (同数ならキー順) に並べ、走査順に依存しないマージ結果にする
+const compareBuckets = (a: QuantizedBucket, b: QuantizedBucket): number =>
+  b.count - a.count || (a.key < b.key ? -1 : a.key > b.key ? 1 : 0)
+
 export const detectColor = ({ data }: ImageData, skip = 0): [PrimaryColorObject, ColorCounter] => {
   assertValidSkip(skip)
 
-  const buckets: Record<string, ColorBucket> = {}
+  const buckets: Record<string, QuantizedBucket> = {}
 
   // 1px ごとに画像データを走査する ( 1px ごとに rgba の 4 要素ある )
   for (let px = 0, len = data.length; px < len; px += (skip + 1) * 4) {
@@ -49,38 +62,43 @@ export const detectColor = ({ data }: ImageData, skip = 0): [PrimaryColorObject,
       bucket.green += green
       bucket.blue += blue
     } else {
-      buckets[key] = { blue, count: 1, green, red }
+      buckets[key] = { blue, count: 1, green, key, red }
     }
   }
 
   const candidates: ColorCandidate[] = []
 
-  for (const bucket of Object.values(buckets)) {
-    const rgb = toAverageRGBString(bucket)
-    const candidate = candidates.find((current) =>
-      isApproximateColor(current.rgb, rgb, OKLAB_MERGE_THRESHOLD),
+  for (const { blue, count, green, red } of Object.values(buckets).sort(compareBuckets)) {
+    const lab = toAverageOKLab({ blue, count, green, red })
+    const candidate = candidates.find(
+      (current) => getLabDistance(current.lab, lab) < OKLAB_MERGE_THRESHOLD,
     )
 
     if (candidate) {
-      candidate.count += bucket.count
-      candidate.red += bucket.red
-      candidate.green += bucket.green
-      candidate.blue += bucket.blue
-      candidate.rgb = toAverageRGBString(candidate)
+      candidate.count += count
+      candidate.red += red
+      candidate.green += green
+      candidate.blue += blue
     } else {
-      candidates.push({ ...bucket, rgb })
+      candidates.push({ blue, count, green, lab, red })
     }
   }
 
-  const primary: PrimaryColorObject = { rgb: '', count: 0 }
   const colors: ColorCounter = {}
 
   for (const candidate of candidates) {
-    colors[candidate.rgb] = (colors[candidate.rgb] ?? 0) + candidate.count
+    const rgb = toAverageRGBString(candidate)
 
-    if (candidate.count > primary.count) {
-      primary.rgb = candidate.rgb
-      primary.count = candidate.count
+    colors[rgb] = (colors[rgb] ?? 0) + candidate.count
+  }
+
+  // 平均色が同じ候補は合算されるため、colors と食い違わないよう集計後の値から選ぶ
+  const primary: PrimaryColorObject = { rgb: '', count: 0 }
+
+  for (const [rgb, count] of Object.entries(colors)) {
+    if (count > primary.count) {
+      primary.rgb = rgb as RGBString
+      primary.count = count
     }
   }
 
