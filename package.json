@@ -24,11 +24,9 @@
   "type": "module",
   "sideEffects": [
     "./dist/jquery.js",
-    "./dist/jquery.cjs",
     "./dist/jquery.primarycolor.umd.js"
   ],
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
+  "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "typesVersions": {
     "*": {
@@ -41,24 +39,12 @@
   "jsdelivr": "./dist/jquery.primarycolor.umd.js",
   "exports": {
     ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
-      }
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     },
     "./jquery": {
-      "import": {
-        "types": "./dist/jquery.d.ts",
-        "default": "./dist/jquery.js"
-      },
-      "require": {
-        "types": "./dist/jquery.d.cts",
-        "default": "./dist/jquery.cjs"
-      }
+      "types": "./dist/jquery.d.ts",
+      "default": "./dist/jquery.js"
     },
     "./package.json": "./package.json"
   },
@@ -67,7 +53,7 @@
     "ci": "bun run lint && bun run test && bun run build && bun run test:dist && bun run test:umd && bun run lint:package",
     "fix": "oxlint --fix && oxfmt",
     "lint": "oxlint && oxfmt --check && tsc --noEmit",
-    "lint:package": "publint --strict && attw --pack .",
+    "lint:package": "publint --strict && attw --pack . --ignore-rules cjs-resolves-to-esm",
     "lint:type": "tsc --noEmit",
     "test": "vitest run --exclude \"test/**/*.test.ts\"",
     "test:dist": "vitest run test/dist.test.ts",

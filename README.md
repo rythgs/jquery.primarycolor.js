@@ -115,6 +115,9 @@ $(function () {
 - `jquery.primarycolor.js` — side-effect-free Promise-based TypeScript API
 - `jquery.primarycolor.js/jquery` — jQuery plugin adapter that registers `$.fn.primaryColor`
 
+The package is ESM-only. CommonJS projects can still `require()` it on Node.js `^20.19.0 || >=22.12.0`
+(native `require(esm)`).
+
 UMD is distributed as `dist/jquery.primarycolor.umd.js` for script tag usage.
 
 If you use the jQuery plugin from a bundler, import `jquery.primarycolor.js/jquery`

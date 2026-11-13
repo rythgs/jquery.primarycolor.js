@@ -21,17 +21,13 @@ describe('package dist exports', () => {
     expect(typeof $.fn.primaryColor).toBe('function')
   })
 
-  it('CJS exports are require-able', () => {
-    Reflect.deleteProperty($.fn, 'primaryColor')
-
-    const root = require('../dist/index.cjs')
+  it('CommonJS consumers can require() the ESM build through package exports', () => {
+    const root = require('jquery.primarycolor.js')
 
     expect(typeof root.getPrimaryColor).toBe('function')
-    expect($.fn.primaryColor).toBeUndefined()
 
-    const jquery = require('../dist/jquery.cjs')
+    const plugin = require('jquery.primarycolor.js/jquery')
 
-    expect(jquery.default).toBeDefined()
-    expect(typeof $.fn.primaryColor).toBe('function')
+    expect(typeof plugin.default.fn.primaryColor).toBe('function')
   })
 })
