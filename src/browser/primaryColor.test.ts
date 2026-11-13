@@ -52,9 +52,22 @@ const installImageMock = () => {
 
     width = 2
 
+    sizes = ''
+
+    private srcsetValue = ''
+
     set src(value: string) {
       this.currentSrc = value
       queueMicrotask(() => this.onload?.())
+    }
+
+    set srcset(value: string) {
+      this.srcsetValue = value
+      queueMicrotask(() => this.onload?.())
+    }
+
+    get srcset(): string {
+      return this.srcsetValue
     }
 
     get src(): string {
@@ -97,6 +110,40 @@ describe('getPrimaryColor', () => {
     await getPrimaryColor(img, { skip: 0 })
 
     expect(images[0]?.crossOrigin).toBe('')
+  })
+
+  it('読み込み済みの同一オリジン画像は再リクエストしない', async () => {
+    installCanvasMock()
+    const images = installImageMock()
+
+    const img = document.createElement('img')
+    img.src = '/sample.png'
+    Object.defineProperty(img, 'complete', { value: true })
+    Object.defineProperty(img, 'naturalWidth', { value: 2 })
+    Object.defineProperty(img, 'naturalHeight', { value: 2 })
+
+    await expect(getPrimaryColor(img, { skip: 0 })).resolves.toMatchObject({ color: '0,255,0' })
+    expect(images).toHaveLength(0)
+  })
+
+  it('srcset のみで未読み込みの画像は srcset を引き継いで読み込む', async () => {
+    installCanvasMock()
+    const images = installImageMock()
+
+    const img = document.createElement('img')
+    img.srcset = 'data:image/png;base64,test 1x'
+
+    await expect(getPrimaryColor(img, { skip: 0 })).resolves.toMatchObject({ color: '0,255,0' })
+    expect(images[0]?.srcset).toBe('data:image/png;base64,test 1x')
+  })
+
+  it('src も srcset もない画像は reject する', async () => {
+    installCanvasMock()
+    installImageMock()
+
+    await expect(getPrimaryColor(document.createElement('img'))).rejects.toThrow(
+      'Failed to load image.',
+    )
   })
 
   it.each([[-1], [0.5], [Number.NaN], [Number.POSITIVE_INFINITY]])(

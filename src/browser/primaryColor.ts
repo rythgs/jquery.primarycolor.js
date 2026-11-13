@@ -39,20 +39,36 @@ const shouldUseAnonymousCrossOrigin = (src: string): boolean => {
   }
 }
 
-const loadImage = (element: HTMLImageElement): Promise<HTMLImageElement> =>
-  new Promise((resolve, reject) => {
-    const img = new Image()
-    const src = element.currentSrc || element.src
+const loadImage = (element: HTMLImageElement): Promise<HTMLImageElement> => {
+  const src = element.currentSrc || element.src
+  const crossOrigin =
+    element.crossOrigin ?? (shouldUseAnonymousCrossOrigin(src) ? 'anonymous' : null)
 
-    if (element.crossOrigin) {
-      img.crossOrigin = element.crossOrigin
-    } else if (shouldUseAnonymousCrossOrigin(src)) {
-      img.crossOrigin = 'anonymous'
+  // 読み込み済みで CORS モードを変えずに済む場合は、再リクエストせず要素をそのまま使う
+  if (element.complete && element.naturalWidth > 0 && crossOrigin === element.crossOrigin) {
+    return Promise.resolve(element)
+  }
+
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+
+    if (crossOrigin) {
+      img.crossOrigin = crossOrigin
     }
     img.onload = () => resolve(img)
     img.onerror = () => reject(new Error('Failed to load image.'))
-    img.src = src
+
+    if (src) {
+      img.src = src
+    } else if (!element.srcset) {
+      reject(new Error('Failed to load image.'))
+    } else {
+      // srcset のみで未読み込みの要素は currentSrc / src が空なので srcset ごと引き継ぐ
+      img.sizes = element.sizes
+      img.srcset = element.srcset
+    }
   })
+}
 
 export const getPrimaryColor = async (
   element: HTMLImageElement,
@@ -80,11 +96,18 @@ export class PrimaryColor {
     private readonly element: HTMLImageElement,
     private readonly options: ResolvedPrimaryColorOptions,
   ) {
-    this.load().catch(() => undefined)
+    void this.load()
   }
 
   private async load(): Promise<void> {
-    const result = await getPrimaryColor(this.element, this.options)
+    let result: PrimaryColorResult
+
+    try {
+      result = await getPrimaryColor(this.element, this.options)
+    } catch {
+      // 読み込み・CORS の失敗時はコールバックを呼ばない。コールバック自身の例外は握りつぶさない
+      return
+    }
 
     this.primary = result.color
     this.options.callback?.call(this.element, result.color, result.topColors)
