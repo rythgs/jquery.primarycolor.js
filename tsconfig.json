@@ -15,7 +15,7 @@
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
     "declaration": true,
-    "declarationMap": true,
+    "isolatedDeclarations": true,
     "ignoreDeprecations": "6.0",
     "outDir": "dist",
     "types": []

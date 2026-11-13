@@ -7,7 +7,7 @@ import type {
 
 import { getImageData } from './imageData'
 
-export const defaultPrimaryColorOptions = {
+export const defaultPrimaryColorOptions: { readonly skip: 5 } = {
   skip: 5,
 } as const satisfies ResolvedPrimaryColorOptions
 
@@ -113,7 +113,7 @@ export class PrimaryColor {
     this.options.callback?.call(this.element, result.color, result.topColors)
   }
 
-  static getImageData = getImageData
+  static getImageData: typeof getImageData = getImageData
 
-  static sortColors = sortColors
+  static sortColors: typeof sortColors = sortColors
 }
