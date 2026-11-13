@@ -1,4 +1,11 @@
 export const getImageData = (img: HTMLImageElement): ImageData => {
+  const width = img.naturalWidth || img.width
+  const height = img.naturalHeight || img.height
+
+  if (!width || !height) {
+    throw new Error('Image has no intrinsic size.')
+  }
+
   const canvas = document.createElement('canvas')
   const context = canvas.getContext('2d')
 
@@ -6,9 +13,9 @@ export const getImageData = (img: HTMLImageElement): ImageData => {
     throw new Error('Canvas 2D context is not available.')
   }
 
-  canvas.width = img.naturalWidth || img.width
-  canvas.height = img.naturalHeight || img.height
-  context.drawImage(img, 0, 0)
+  canvas.width = width
+  canvas.height = height
+  context.drawImage(img, 0, 0, width, height)
 
-  return context.getImageData(0, 0, canvas.width, canvas.height)
+  return context.getImageData(0, 0, width, height)
 }
