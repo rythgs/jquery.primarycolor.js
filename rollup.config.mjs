@@ -7,7 +7,8 @@ export default {
     exports: 'named',
     name: 'jqueryPrimaryColor',
     globals: {
-      jquery: '$',
+      // jQuery.noConflict() 後も参照できるよう $ ではなく jQuery を使う
+      jquery: 'jQuery',
     },
     sourcemap: true,
   },
