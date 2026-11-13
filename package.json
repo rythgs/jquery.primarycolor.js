@@ -15,7 +15,7 @@
   "author": "rythgs",
   "repository": {
     "type": "git",
-    "url": "https://github.com/rythgs/jquery.primarycolor.js.git"
+    "url": "git+https://github.com/rythgs/jquery.primarycolor.js.git"
   },
   "source": "src/index.ts",
   "files": [
@@ -30,52 +30,74 @@
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
-    },
-    "./jquery": {
-      "types": "./dist/jquery.d.ts",
-      "import": "./dist/jquery.js",
-      "require": "./dist/jquery.cjs"
+  "typesVersions": {
+    "*": {
+      "jquery": [
+        "./dist/jquery.d.ts"
+      ]
     }
   },
+  "unpkg": "./dist/jquery.primarycolor.umd.js",
+  "jsdelivr": "./dist/jquery.primarycolor.umd.js",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./jquery": {
+      "import": {
+        "types": "./dist/jquery.d.ts",
+        "default": "./dist/jquery.js"
+      },
+      "require": {
+        "types": "./dist/jquery.d.cts",
+        "default": "./dist/jquery.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
-    "clean": "rm -rf dist",
-    "build": "bun run clean && bun run bundle",
-    "ci": "bun run lint && bun run test && bun run build && bun run test:dist && bun run test:umd",
-    "compile": "tsc",
+    "build": "bun run bundle",
+    "ci": "bun run lint && bun run test && bun run build && bun run test:dist && bun run test:umd && bun run lint:package",
     "bundle": "bun run bundle:modules && bun run bundle:umd",
     "bundle:modules": "tsup",
     "bundle:umd": "rollup -c",
     "fix": "oxlint --fix && oxfmt",
     "lint": "oxlint && oxfmt --check && tsc --noEmit",
+    "lint:package": "publint --strict && attw --pack .",
     "lint:type": "tsc --noEmit",
     "test": "vitest run --exclude \"test/**/*.test.ts\"",
-    "test:dist": "vitest run test/*.test.ts",
+    "test:dist": "vitest run test/dist.test.ts",
     "test:umd": "vitest run test/umd.test.ts",
-    "prepare": "bun run build"
+    "prepack": "bun run build"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "0.18.5",
     "@types/jquery": "4.0.0",
     "@types/node": "24.12.4",
     "jquery": "4.0.0",
     "jsdom": "29.1.1",
     "oxfmt": "0.50.0",
     "oxlint": "1.65.0",
+    "publint": "0.3.25",
     "rollup": "4.60.4",
     "tsup": "8.5.1",
     "typescript": "6.0.3",
     "vitest": "4.1.6"
   },
   "peerDependencies": {
-    "jquery": ">=4 <5"
+    "jquery": ">=3 <5"
   },
-  "engines": {
-    "bun": ">=1.3.14",
-    "node": ">=24"
+  "peerDependenciesMeta": {
+    "jquery": {
+      "optional": true
+    }
   },
   "packageManager": "bun@1.3.14"
 }

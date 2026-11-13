@@ -1,7 +1,7 @@
 import { defineConfig } from 'tsup'
 
 export default defineConfig({
-  clean: false,
+  clean: true,
   dts: true,
   entry: ['src/index.ts', 'src/jquery.ts'],
   external: ['jquery'],
